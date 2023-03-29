@@ -8,7 +8,7 @@ using namespace std;
 
 
 
-auto topologicalSort(vector<vector<pair<int64_t, int64_t>>>& graph , vector<int>& inDegree) {
+auto topologicalSort(vector<vector<pair<int64_t, int64_t>>>& graph, vector<int>& inDegree) {
     auto n = graph.size();
     queue<int64_t> q;
     vector<int> result;
@@ -41,55 +41,55 @@ auto topologicalSort(vector<vector<pair<int64_t, int64_t>>>& graph , vector<int>
 
 
 void DAG(const vector<vector<pair<int64_t, int64_t>>>& graph, vector<int64_t>& distance, vector<int>& top_sort_order, vector<vector<int>>& shortest_path) {
-    
 
-    for (auto u : top_sort_order) {
-      
-            for (auto v : graph[u]) {
-                if (distance[v.first] > distance[u] + v.second) {
-                    distance[v.first] = distance[u] + v.second;
-                    if (shortest_path[v.first].size() == 0) {
-                        shortest_path[v.first].emplace_back(u);
-                    }
-                    else {
-                        shortest_path[v.first].clear();
-                        shortest_path[v.first].insert(shortest_path[v.first].end(), shortest_path[u].begin(), shortest_path[u].end());
-                         shortest_path[v.first].emplace_back(u);
-                    }
+
+    for (const auto& u : top_sort_order) {
+
+        for (const auto& v : graph[u]) {
+            if (distance[v.first] > distance[u] + v.second) {
+                distance[v.first] = distance[u] + v.second;
+                if (shortest_path[v.first].empty()) {
+                    shortest_path[v.first].emplace_back(u);
+                }
+                else {
+                    shortest_path[v.first].clear();
+                    shortest_path[v.first].insert(shortest_path[v.first].begin(), shortest_path[u].begin(), shortest_path[u].end());
+                    shortest_path[v.first].emplace_back(u);
                 }
             }
         }
+    }
 
 
-   
+
 
 }
 
 
 
 int main() {
-    int n, m,start;
-    cin >> n >> m>>start;
+    int n, m, start;
+    cin >> n >> m >> start;
 
 
     vector<vector<pair<int64_t, int64_t>>> graph(n + 1);
     vector inDegree(n + 1, 0);
     vector visited(n + 1, false);
-    vector<vector<int>> shortest_path(n+1);
+    vector<vector<int>> shortest_path(n + 1);
     for (int i = 0; i < m; ++i) {
-        int u, v,weight;
-        cin >> u >> v>>weight;
+        int u, v, weight;
+        cin >> u >> v >> weight;
         graph[u].emplace_back(v, weight);
         inDegree[v]++;
     }
 
     auto top_sort_order = topologicalSort(graph, inDegree);
 
-    std::vector<int64_t> distance(n+1, std::numeric_limits<int>::max());
+    std::vector<int64_t> distance(n + 1, std::numeric_limits<int>::max());
 
     distance[start] = 0;
-    DAG(graph, distance, top_sort_order,shortest_path);
-   
+    DAG(graph, distance, top_sort_order, shortest_path);
+
 }
 //5 8 5
 //5 1 7
