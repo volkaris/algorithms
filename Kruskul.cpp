@@ -38,11 +38,17 @@ int main() {
 
 			MST.emplace_back(edge);
 
-			int old_color = colors[end];
+			int end_color = colors[end];
+#
+			for (int i=0;i<colors.size();++i) {
+				if (colors[i]==end_color) {
+					colors[i] = colors[start];
+				}
+			}
 
-			ranges::transform(colors, colors.begin(),[&](int c) {
-				return c == old_color ? colors[start] : c;
-			});
+			/*ranges::transform(colors, colors.begin(),[&](int c) {
+				return c == end_color ? colors[start] : c;
+			});*/
 			++idx;
 			if (idx == V - 1) {
 				break;
