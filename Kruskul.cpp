@@ -1,16 +1,20 @@
-#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <tuple>
-#include <ranges>
-
+#include <queue>
 using namespace std;
 
-int main() {
+struct TupleComparator {
+	bool operator()(const std::tuple<int, int, int>& a, const std::tuple<int, int, int>& b) const {
+		return std::get<2>(a) > std::get<2>(b); // compare based on third element
+	}
+};
+
+
+int Kruskal() {
 	int V, E;
 	cin >> V >> E;
-
-	std::vector<std::tuple<int, int, int>> edges(E);
+	int cost_Of_mst = 0;
+	std::priority_queue<std::tuple<int, int, int>, std::vector<std::tuple<int, int, int>>, TupleComparator> edges;
 	std::vector<std::tuple<int, int, int>> MST;
 	MST.reserve(V - 1);
 
@@ -19,43 +23,47 @@ int main() {
 	for (int i = 0; i < E; i++) {
 		int u, v, w;
 		cin >> u >> v >> w;
-		edges[i] = std::make_tuple(u, v, w);
+		edges .push(std::make_tuple(u, v, w));
 	}
-
-	std::ranges::sort(edges, [](const auto& a, const auto& b) {
-		return std::get<2>(a) < std::get<2>(b);});
 
 	for (int i = 1; i <= V; i++) {
 		colors[i] = i;
 	}
-	int idx = 0;
 
-	for (const auto& edge : edges) {
-		int start = std::get<0>(edge);
-		int end = std::get<1>(edge);
+	int idx = 0;
+	while (!edges.empty()) {
+		const int start = std::get<0>(edges.top());
+		const int end = std::get<1>(edges.top());
 
 		if (colors[start] != colors[end]) {
 
-			MST.emplace_back(edge);
+			MST.emplace_back(edges.top());
+			cost_Of_mst += std::get<2>(edges.top());
 
-			int end_color = colors[end];
-#
-			for (int i=0;i<colors.size();++i) {
-				if (colors[i]==end_color) {
-					colors[i] = colors[start];
-				}
-			}
-
-			/*ranges::transform(colors, colors.begin(),[&](int c) {
-				return c == end_color ? colors[start] : c;
-			});*/
 			++idx;
 			if (idx == V - 1) {
 				break;
 			}
 
+			const int end_color = colors[end];
+#
+
+			for (int i = 0; i < colors.size(); ++i) {
+				if (colors[i] == end_color) {
+					colors[i] = colors[start];
+				}
+			}
+
 		}
+		
+		edges.pop();
 	}
+	return cost_Of_mst;
+
+}
 
 
+int main() {
+
+	cout<<Kruskal();
 }
