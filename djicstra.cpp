@@ -8,32 +8,36 @@ using namespace std;
 const int INF = numeric_limits<int>::max();
 
 
-vector<int> dijkstra(int start, vector<vector<pair<int, int>>>& graph, vector<vector<int>>& shortest_path) {
+vector<int> dijkstra(int start, vector<vector<pair<int, int>>>& graph) {
+
     size_t n = graph.size();
-    vector dist(n, INF);
+    vector<int> dist(n, INF);
+
+
     dist[start] = 0;
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, less<pair<int, int>>> pq;  // NOLINT(modernize-use-transparent-functors)
+    priority_queue < pair<int, int>, vector<pair<int, int>>, less <pair<int, int>> > pq;
 
     pq.push(make_pair(start, 0));
 
     while (!pq.empty()) {
-        int cur_vertex = pq.top().first; //текущая вершина
+        int cur_vertex = pq.top().first;
+
+
         pq.pop();
 
-        for (auto& neighbor : graph[cur_vertex]) {
+        for (const auto& neighbor : graph[cur_vertex]) {
 
-        	const int weight_of_edge = neighbor.second;
+
+
+            const int weight_of_edge = neighbor.second;
+
             if (dist[cur_vertex] + weight_of_edge < dist[neighbor.first]) {
 
-            	dist[neighbor.first] = dist[cur_vertex] + weight_of_edge;
-                pq.push(make_pair(neighbor.first, neighbor.second));
-                  
+                dist[neighbor.first] = dist[cur_vertex] + weight_of_edge;
 
-            	shortest_path[neighbor.first].clear();
-            	shortest_path[neighbor.first].insert(shortest_path[neighbor.first].begin(), shortest_path[cur_vertex].begin(), shortest_path[cur_vertex].end());
-            	shortest_path[neighbor.first].emplace_back(cur_vertex);
-                
+                pq.push(make_pair(neighbor.first, dist[cur_vertex] + weight_of_edge));
+
             }
         }
     }
